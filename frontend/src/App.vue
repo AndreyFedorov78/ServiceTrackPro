@@ -24,6 +24,15 @@ body {
   background-repeat: repeat-y; /* Повторять только по вертикали */
 
 }
+.main_bg {
+  background-color:  #EE7A21!important;
+  border-color: #EE7A21!important;
+}
+
+.table {
+  border-color: #EE7A21!important;
+}
+
 </style>
 
 

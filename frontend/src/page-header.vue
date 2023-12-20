@@ -3,7 +3,8 @@
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
-      <span class="navbar-brand" >ServiceTrack</span>
+     <img class="logo" src="@/assets/ServiceTrack.gif" alt="ServiceTrack">
+
 
 
 
@@ -19,12 +20,12 @@
               Меню
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="/customers/">Заказчики</a></li>
+              <li><a class="dropdown-item" href="/admin/">Админка</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li><a class="dropdown-item" href="/admin/">Админка</a></li>
             </ul>
           </li>
         </ul>
@@ -39,3 +40,11 @@
     </div>
   </nav>
 </template>
+
+<style>
+.logo {
+  height: 4em;
+}
+
+
+</style>
