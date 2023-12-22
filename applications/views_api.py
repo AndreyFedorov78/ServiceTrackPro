@@ -38,6 +38,13 @@ class CustomerAPIView(APIView):
         serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
+    def delete(self, request, id):
+        try:
+            Customer.objects.get(id=id).delete()
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'result':'ok'})
+
     def put(self, request, id):
 
         if id == 0:

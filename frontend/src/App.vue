@@ -14,7 +14,7 @@
 /* Глобальные стили для body */
 body {
 
-  padding-top: 4em;
+  padding-top: 8em;
   /* Указание пути к вашему изображению в качестве фона */
   background-image: url('@/assets/background1.png');
 

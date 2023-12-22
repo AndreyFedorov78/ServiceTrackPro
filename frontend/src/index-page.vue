@@ -1,5 +1,5 @@
 <template>
-  <div id="cont" class="col-sm m-4 shadow p-3  bg-white rounded">
+  <div id="cont" class="col-sm m-4 mt-6 shadow p-3  bg-white rounded">
 
     <center><h1>Пример рабочего поля</h1></center>
 
