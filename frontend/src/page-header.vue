@@ -18,8 +18,9 @@
               Меню
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/">Заявки</a></li>
               <li><a class="dropdown-item" href="/customers/">Заказчики</a></li>
-              <!--li><a class="dropdown-item" href="/admin/">Админка</a></li-->
+              <li><a class="dropdown-item" href="/objects/">Объекты</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
