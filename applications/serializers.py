@@ -34,13 +34,22 @@ class ObjectSerializer(serializers.ModelSerializer):
         model = Object
         fields = '__all__'
 
+class ObjectSerializer2(serializers.ModelSerializer):
+    sub_name = serializers.SerializerMethodField()
+    responsible = UserListSerializer()
+    customer = CustomerSerializer()
+    class Meta:
+        model = Object
+        fields = '__all__'
 
-
-
+    def get_sub_name(self, obj):
+        return f'{obj.customer.name} : "{obj.name}"'
 
 
 
 class RequestSerializer(serializers.ModelSerializer):
+    created_by=UserListSerializer()
+    object = ObjectSerializer2()
     class Meta:
         model = Request
         fields = '__all__'

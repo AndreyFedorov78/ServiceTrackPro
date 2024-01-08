@@ -70,3 +70,21 @@ export async function FetchJsonDELETE(url, data) {
 export async function FetchJsonPUT(url, data) {
   return await FetchJSON(url, "PUT", data);
 }
+
+
+// перевод даты из строки в дату
+export function convertToDate(dateString) {
+  if (dateString==null) return null
+  const [year, month, day] = dateString.split('-');
+  // Месяцы в JavaScript начинаются с 0, поэтому вычитаем 1 из месяца
+  return new Date(year, month - 1, day);
+}
+
+export function formatDate(date) {
+  if (date==null) return null
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+

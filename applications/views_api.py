@@ -1,14 +1,25 @@
+import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db import models
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Customer, Object,  Request
-from .serializers import CustomerSerializer, ObjectSerializer,  RequestSerializer
+from .models import Customer, Object, Request
+from .serializers import CustomerSerializer, ObjectSerializer, ObjectSerializer2, RequestSerializer
 from .serializers import UserSerializer, UserListSerializer
+
+
+def get_related_models(model):
+    related_fields = {}
+    for field in model._meta.fields:
+        if isinstance(field, models.ForeignKey):
+            related_fields[field.name] = field.related_model
+    return related_fields
 
 
 # Create your views here.
@@ -73,13 +84,85 @@ class CustomerAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RequestAPIView(APIView):
+    @staticmethod
+    def get(request, id):
+        if id == 0:
+            request_ = Request()
+            request_.request_date = datetime.date.today()
+            if request.user.is_authenticated:
+                request_.created_by = request.user
+            else:
+                # костыль для отладки без авторизации
+                request_.created_by = User.objects.all()[0]
+            return Response(RequestSerializer(request_).data)
+        request_ = get_object_or_404(Request, id=id)
+        serializer = RequestSerializer(request_)
+        return Response(serializer.data)
+
+    @staticmethod
+    def delete(request, id):
+        try:
+            Request.objects.get(id=id).delete()
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'result': 'ok'})
+
+    @staticmethod
+    def put(request, id):
+        # получаем поля модели
+        fields = Request._meta.fields
+        field_names = [field.name for field in fields]
+
+        #  поля с дадами
+        dates = [
+            field.name for field in fields
+            if isinstance(field, models.DateField)
+        ]
+        # поля ссылки
+        relatedList = get_related_models(Request)
+        # print(relatedList.keys())
+
+        if id == 0:
+            request_ = Request()
+        else:
+            request_ = get_object_or_404(Request, id=id)
+        for attr, value in request.data.items():
+            if attr not in field_names or attr == 'id':
+                continue
+            # переформатируем даты
+            if attr in dates:
+                value = value[0:10] if value is not None else value
+            # переформатируем объекты
+            if attr in relatedList and value is not None:
+                id = value if isinstance(value, int) else value['id']
+                try:
+                    value = relatedList[attr].objects.get(id=id)
+                except:
+                    return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                setattr(request_, attr, value)
+            except:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        #try:
+        request_.save()
+        #except:
+        #    Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({})
+
+
 class ObjectAPIView(APIView):
     @staticmethod
     def get(request, id):
         if id == 0:
             object_ = Object()
             if request.user.is_authenticated:
-               object_.responsible = request.user
+                object_.responsible = request.user
             return Response(ObjectSerializer(object_).data)
         object = get_object_or_404(Object, id=id)
         serializer = ObjectSerializer(object)
@@ -96,7 +179,6 @@ class ObjectAPIView(APIView):
 
     @staticmethod
     def put(request, id):
-        print("STARTING")
         if id == 0:
             object_ = Object()
         else:
@@ -115,19 +197,18 @@ class ObjectAPIView(APIView):
             try:
                 setattr(object_, attr, value)
             except:
-                Response({}, status=status.HTTP_400_BAD_REQUEST)
-            try:
-                object_.save()
-            except:
-                Response({}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            object_.save()
+        except:
+            Response({}, status=status.HTTP_400_BAD_REQUEST)
         serializer = ObjectSerializer(object_)
         return Response(serializer.data)
 
 
 class ObjectListAPIView(generics.ListAPIView):
     queryset = Object.objects.all()
-    serializer_class = ObjectSerializer
-
+    serializer_class = ObjectSerializer2
 
 
 class RequestListAPIView(generics.ListAPIView):

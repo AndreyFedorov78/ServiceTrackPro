@@ -2,7 +2,7 @@ import {createApp} from 'vue';
 import App from './App.vue';
 import PageHeader from './page-header.vue';
 import RequestList from './requests-list.vue';
-//import IndexPage from './index-page.vue';
+import RequestDetail from './request-detail.vue';
 import Customers from './customers-list.vue';
 import Objects from './objects-list.vue';
 import CustomerDetail from './customer-detail.vue';
@@ -28,7 +28,9 @@ app.config.globalProperties.api_path = process.env.VUE_APP_API_PATH;  // пут�
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/', component: RequestList}, // index.html
+        {path: '/', component: RequestList},
+        {path: '/requests/', component: RequestList},
+        {path: '/request/:id', component: RequestDetail},
         {path: '/customers/', component: Customers},
         {path: '/customer/:id', component: CustomerDetail, props: true},
         {path: '/objects/', component: Objects, props: true},
