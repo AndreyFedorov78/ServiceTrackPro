@@ -1,0 +1,41 @@
+{% extends 'applications/common.html' %}
+
+{% block content %}
+	<div id="app">
+  <p class="text-center h3 mb-4"> Список регионов</p>
+
+	<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Новый регион" aria-label="Новый регион" aria-describedby="button-addon2" v-model="region.title">
+  <button class="btn" :class="{'btn-success': region.title, 'btn-outline-secondary': !region.title} " type="button" id="button-addon2" v-on:click="if (region.title) edit(region)">ДОБАВИТЬ</button>
+</div>
+
+<div class="input-group input-group-sm mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-sm">Поиск:</span>
+  <input type="text" class="form-control" aria-label="Строка поиска" aria-describedby="Строка поиска" v-model="filter_title">
+</div>
+
+
+
+<div v-for="(item,index) in regions_filtered" class="row m-0 text-center border-bottom pb-2 pt-2">
+	<div class="col-1 themed-grid-col  text-start align-middle">[[index+1]]</div>
+	<div class="col-7 themed-grid-col  text-start align-middle" v-if="edit_id-item.id"> [[item.title]] <i>[["["+item.id+"]"]]</i></div>
+	<div class="col-7 themed-grid-col  text-start align-middle" v-else> <input v-model="edit_title"> <i>[["["+item.id+"]"]]</i></div>
+
+      <div class="col-2 themed-grid-col" v-if="edit_id-item.id"><button type="button" class="btn btn-outline-success btn-sm" v-on:click="edit_id=item.id;edit_title=item.title" >редактировать</button></div>
+      <div class="col-2 themed-grid-col"  v-else><button type="button" class="btn btn-outline-success btn-sm" v-on:click="if (edit_title) edit({id:edit_id, title:edit_title});edit_id=0">сохранить</button></div>
+      <div class="col-2 themed-grid-col "><button type="button" class="btn btn-outline-danger btn-sm">удалить</button></div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block js %}
+
+	<script src="/static/applications/js/regions.js"></script>
+
+
+{% endblock %}

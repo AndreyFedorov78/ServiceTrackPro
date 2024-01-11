@@ -1,0 +1,54 @@
+{% extends 'applications/common.html' %}
+
+{% block content %}
+
+	<div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog"
+	     id="modalSheet">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content rounded-4 shadow">
+				<div class="modal-header border-bottom-0">
+					<p class="text-center">
+					<h1 class="modal-title fs-5">Авторизация</h1>
+					</p>
+				</div>
+				<div class="modal-body py-0">
+
+					<form method="post">
+						{% csrf_token %}
+            {% if form.errors %}
+	              <p class="text-danger  text-center">Неверные логин или пароль</p>
+						{% endif %}
+
+						<table class="table table-borderless">
+							<tr>
+								<td class="text-end ">
+									имя пользователя:
+								</td>
+								<td>  {{ form.username }}</td>
+							</tr>
+							<tr>
+								<td class="text-end ">
+									пароль:
+								</td>
+								<td> {{ form.password }}</td>
+							</tr>
+						</table>
+
+						<div class="modal-footer flex-column align-items-stretch w-100 gap-2 pb-3 border-top-0">
+							<button type="submit" class="btn btn-lg btn-primary">Войти</button>
+						</div>
+					</form>
+
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+{% endblock %}

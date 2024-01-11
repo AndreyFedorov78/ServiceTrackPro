@@ -2,6 +2,26 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+class Region(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField('Наименование', max_length=255)
+
+    class Meta:
+        verbose_name='Регион'
+        verbose_name_plural = 'Регионы'
+
+class Region_name(models.Model):
+    reg_id = models.ForeignKey(Region,on_delete=models.PROTECT)
+    title = models.CharField('Наименование',max_length=255)
+    class Meta:
+        verbose_name = 'Наименование региона'
+        verbose_name_plural = 'Наименования регионов'
+
+
+
+
+
 class Customer(models.Model):
     name = models.CharField(max_length=255)
     details = models.TextField(blank=True)
