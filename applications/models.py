@@ -53,10 +53,10 @@ class Facility(models.Model):
     class Meta:
         verbose_name='Объект'
         verbose_name_plural = 'Объекты'
-        ordering = ["title",]
+        ordering = ["customer__name","title",]
 
     def __str__(self):
-        return self.name
+        return f'{self.title} / {self.customer.name}'
 
 
 

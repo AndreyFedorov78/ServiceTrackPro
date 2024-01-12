@@ -1,12 +1,17 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Customer, Object,  Request, Region
+from .models import Customer, Object,  Request, Region, Facility
 
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
+        fields = "__all__"
+
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
         fields = "__all__"
 
 

@@ -1,14 +1,19 @@
 from django.contrib import admin
-from .models import Customer, Object,  Request
+from .models import Customer, Object,  Request, Facility
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name', 'details', 'representative')
 
+@admin.register(Facility)
+class FacilityAdmin(admin.ModelAdmin):
+    pass
+
+"""
 @admin.register(Object)
 class ObjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'customer', 'responsible')
-
+"""
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     pass

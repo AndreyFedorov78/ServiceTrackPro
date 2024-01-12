@@ -9,9 +9,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Customer, Object, Request, Region
+from .models import Customer, Object, Request, Region, Facility
 from .serializers import CustomerSerializer, ObjectSerializer, ObjectSerializer2, RequestSerializer
-from .serializers import UserSerializer, UserListSerializer, RegionSerializer
+from .serializers import UserSerializer, UserListSerializer, RegionSerializer, FacilitySerializer
 
 
 def get_related_models(model):
@@ -44,6 +44,15 @@ class RegionAPIView(LoginRequiredMixin, APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FacilityAPIView(LoginRequiredMixin, APIView):
+        @staticmethod
+        def post(request):
+            queryset = Facility.objects.all()
+            serializer_class = FacilitySerializer(queryset, many=True)
+            result = serializer_class.data
+            return Response(result)
 
 
 class UserAPI(LoginRequiredMixin, APIView):
@@ -104,8 +113,6 @@ class CustomerListAPIView(LoginRequiredMixin, APIView):
 
 
 class CustomerAPIView(APIView):
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
 
     def get(self, request, id):
         if id == 0:

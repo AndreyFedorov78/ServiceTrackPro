@@ -15,5 +15,6 @@ urlpatterns_api =[
     path('requests/', views_api.RequestListAPIView.as_view(), name='request-list'),
     path('request/<int:id>', views_api.RequestAPIView.as_view(), name='reques'),
     path('region/', views_api.RegionAPIView.as_view(), name='region_api'),
+    path('facility/', views_api.FacilityAPIView.as_view(), name='facility_api'),
 
 ]

@@ -1,5 +1,5 @@
 const url="/api/customers/" // так как тут мы планируем работать с одним API то задем глобальную переменную с путем к API
-
+const url_facility="/api/facility/"
 //содзаем объект vue
 const customer_orders = new Vue({
     el: "#app", // привязываем объект к области div с id="app"
@@ -8,9 +8,11 @@ const customer_orders = new Vue({
         /* две переменные для временного хранения вводимых данных*/
         edit_id:0,
         edit_title:"",
+        facilities: [],
         filter_deleted:true, // скравать уделенные
         filter_title:"",  // строка поиска
         customers: [],
+        f_list:[], // список развернутых проектов
         customer: { "id": 0, "name": "", "details": "", "representative": "", "active": true },
 
     },
@@ -34,6 +36,11 @@ const customer_orders = new Vue({
     },
 
     methods: {
+        facilities_by_customer(customerID){
+            let result = this.facilities.filter(item => (item.customer==customerID));
+            return result;
+        },
+
         zero (item,n){
             return(zeroPad (item,n))
         },
@@ -59,6 +66,7 @@ const customer_orders = new Vue({
 
         async load() {  // пример загрузки из API
             this.customers = await FetchJsonPOST(url,{});
+            this.facilities = await FetchJsonPOST(url_facility,{});
         }
     },
 
