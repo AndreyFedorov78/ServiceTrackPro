@@ -1,21 +1,34 @@
 from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.views.generic import View
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class CustomLoginView(LoginView):
     template_name = 'applications/login.html'
 
+
 class CustomLogoutView(View):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         logout(request)
         return redirect('/')
 
+
 class IndexView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request,"applications/index.html")
+    @staticmethod
+    def get(request):
+        return render(request, "applications/index.html")
+
 
 class RegionsView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request,"applications/regions.html")
+    @staticmethod
+    def get(request):
+        return render(request, "applications/regions.html")
+
+
+class CustomersView(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request):
+        return render(request, "applications/customers.html")

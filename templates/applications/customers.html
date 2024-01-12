@@ -1,0 +1,52 @@
+{% extends 'applications/common.html' %}
+
+{% block content %}
+	<div id="app">
+  <p class="text-center h3 mb-4"> Заказчики</p>
+
+
+	<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="новый заказчик" aria-label="новый заказчик" aria-describedby="button-addon2" v-model="customer.name">
+  <button class="btn" :class="{'btn-success': customer.title, 'btn-outline-secondary': !customer.title} " type="button" id="button-addon2" v-on:click="if (customer.name) edit(customer)">ДОБАВИТЬ</button>
+</div>
+
+<div class="input-group input-group-sm mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-sm">Поиск:</span>
+  <input type="text" class="form-control" placeholder="по наименованию или подписанту" aria-label="Строка поиска" aria-describedby="Строка поиска" v-model="filter_title">
+	<span class="input-group-text" ><input  class="me-2" type="checkbox" v-model="filter_deleted"> скрыть удалленные</span>
+</div>
+
+
+
+<div v-for="(item,index) in customers_filtered" class="row m-0 text-center border-bottom pb-2 pt-2"
+  :class="{'text-secondary' :!item.active}">
+	<div class="col-1 themed-grid-col  text-start align-middle">[[index+1]]</div>
+	<div class="col-7 themed-grid-col  text-start align-middle" v-if="customer.id-item.id"><i><small>[["["+zero(item.id,4) +"]"]]</small>  </i> [[item.name]][[item.representative?(", подписант: "+item.representative):""]]  </div>
+	<div class="col-7 themed-grid-col  text-start align-middle" v-else>
+		<div class="input-group input-group-sm">
+		<input class="form-control me-2" v-model="customer.name" placeholder="Наименование" aria-label="Наименование">
+		<input class="form-control " v-model="customer.representative" placeholder="Подписант" aria-label="Подписант">
+		</div>
+	</div>
+
+      <div class="col-2 themed-grid-col text-end" v-if="customer.id-item.id"><button type="button" class="btn btn-outline-success btn-sm" v-on:click="customer=item" >ред.</button></div>
+      <div class="col-2 themed-grid-col text-end"  v-else><button type="button" class="btn btn-outline-success btn-sm" v-on:click="if (customer.name) edit(customer)">сохр.</button></div>
+      <div class="col-2 themed-grid-col text-start">
+	      <button type="button" class="btn  btn-sm"
+	              :class="{'btn-outline-danger' :item.active, 'btn-outline-success' :!item.active}"
+	              v-on:click="del_item(item)">[[(item.active)?"удалить":"вост."]]</button></div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block js %}
+
+	<script src="/static/applications/js/customers.js"></script>
+
+
+{% endblock %}

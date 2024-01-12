@@ -127,8 +127,9 @@
 		<nav class="nav nav-underline justify-content-between">
 			{% if user.is_authenticated %}
 				<a class="nav-item nav-link link-body-emphasis active" href="{% url 'index' %}">МЕНЮ1</a>
-				<a class="nav-item nav-link link-body-emphasis" href="#">МЕНЮ2</a>
+				<a class="nav-item nav-link link-body-emphasis" href="{% url 'customers' %}">заказчики</a>
 				<a class="nav-item nav-link link-body-emphasis" href="{% url 'regions' %}">регионы</a>
+
 			{% endif %}
 			<a class="nav-item nav-link link-body-emphasis" href="/admin/">админка</a>
 		</nav>

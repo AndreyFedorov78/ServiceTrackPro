@@ -13,6 +13,7 @@ urlpatterns_api =[
     path('objects/', views_api.ObjectListAPIView.as_view(), name='object-list'),
     path('object/<int:id>', views_api.ObjectAPIView.as_view(), name='object'),
     path('requests/', views_api.RequestListAPIView.as_view(), name='request-list'),
-    path('request/<int:id>', views_api.RequestAPIView.as_view(), name='request-list'),
+    path('request/<int:id>', views_api.RequestAPIView.as_view(), name='reques'),
+    path('region/', views_api.RegionAPIView.as_view(), name='region_api'),
 
 ]

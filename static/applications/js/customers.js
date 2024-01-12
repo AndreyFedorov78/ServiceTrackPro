@@ -1,4 +1,4 @@
-const url="/api/region/" // так как тут мы планируем работать с одним API то задем глобальную переменную с путем к API
+const url="/api/customers/" // так как тут мы планируем работать с одним API то задем глобальную переменную с путем к API
 
 //содзаем объект vue
 const customer_orders = new Vue({
@@ -10,27 +10,24 @@ const customer_orders = new Vue({
         edit_title:"",
         filter_deleted:true, // скравать уделенные
         filter_title:"",  // строка поиска
-        regions: [],      // массив данных
-        region: {        //  переменная для создания нового элемента
-            title: "",
-            id:0,
-            active: true
-        }
+        customers: [],
+        customer: { "id": 0, "name": "", "details": "", "representative": "", "active": true },
+
     },
 
     computed: {
         /* отфильтрованный список */
-        regions_filtered(){
+        customers_filtered(){
             // сортировка
-            let result = this.regions.sort(function (a, b) {
-                return (a.title > b.title) ? 1 : (a.title == b.title) ? 0 : -1
+            let result = this.customers.sort(function (a, b) {
+                return (a.name > b.name) ? 1 : (a.name == b.name) ? 0 : -1
             });
             // скрытие удаленных
             if (this.filter_deleted){
                      result = result.filter((item) => item.active);
             }
             // поиск
-            result = result.filter((item) => item.title.toLowerCase().includes(this.filter_title.toLowerCase()));
+            result = result.filter((item) => item.name.toLowerCase().includes(this.filter_title.toLowerCase())  || item.representative.toLowerCase().includes(this.filter_title.toLowerCase()));
             return result;
         },
 
@@ -46,21 +43,22 @@ const customer_orders = new Vue({
             await this.edit(region);
         },
 
-        async edit(region){
-            this.region={title: "", id:0};
-            region  = await FetchJsonPUT(url, region);
+        async edit(item){
+            this.customer = { "id": 0, "name": "", "details": "", "representative": "", "active": true };
+            item  = await FetchJsonPUT(url, item);
+            console.log(item)
             let flag = 1;
-            this.regions.forEach((item, index) => {
-                if (item.id==region.id){
-                    item.title=region.title;
+            this.customers.forEach((item_customer, index) => {
+                if (item_customer.id==item.id){
+                    item_customer=item;
                     flag = 0;
                 }
             })
-            if (flag) this.regions.push(region);
+            if (flag) this.customers.push(item);
         },
 
         async load() {  // пример загрузки из API
-            this.regions = await FetchJsonPOST(url, {});
+            this.customers = await FetchJsonPOST(url,{});
         }
     },
 

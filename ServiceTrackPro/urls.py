@@ -14,7 +14,7 @@ urlpatterns = [
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),
     path('admin/', admin.site.urls),
     path('api/', include(urls_api.urlpatterns_api)),
-    path(r'', views.IndexView.as_view(),name="index"),
+    path(r'', views.CustomersView.as_view(),name="index"),
     path(r'',include(urls.urlpatterns)),
 
 

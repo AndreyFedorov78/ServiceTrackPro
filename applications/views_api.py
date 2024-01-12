@@ -9,9 +9,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Customer, Object, Request
+from .models import Customer, Object, Request, Region
 from .serializers import CustomerSerializer, ObjectSerializer, ObjectSerializer2, RequestSerializer
-from .serializers import UserSerializer, UserListSerializer
+from .serializers import UserSerializer, UserListSerializer, RegionSerializer
 
 
 def get_related_models(model):
@@ -22,7 +22,30 @@ def get_related_models(model):
     return related_fields
 
 
-# Create your views here.
+class RegionAPIView(LoginRequiredMixin, APIView):
+    @staticmethod
+    def post(request):
+        region = Region.objects.all()
+        regionSerializer = RegionSerializer(region, many=True)
+        result = regionSerializer.data
+        return Response(result)
+
+    @staticmethod
+    def put(request):
+        id = request.data.get('id')
+        if id is None:
+            Response({}, status=status.HTTP_400_BAD_REQUEST)
+        if id:
+            region = Region.objects.get(pk=id)
+        else:
+            region = Region()
+        serializer = RegionSerializer(region, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserAPI(LoginRequiredMixin, APIView):
     def get(self, request):
         user = request.user
@@ -45,9 +68,39 @@ class UserListAPI(APIView):
         return Response(user_serializer.data)
 
 
-class CustomerListAPIView(generics.ListAPIView):
+class CustomerListAPIView_____(generics.ListAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+class CustomerListAPIView(LoginRequiredMixin, APIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    @staticmethod
+    def post(request):
+        queryset = Customer.objects.all()
+        serializer_class = CustomerSerializer(queryset, many=True)
+        result = serializer_class.data
+        return Response(result)
+
+    @staticmethod
+    def put(request):
+        id = request.data.get('id')
+        if id is None:
+            Response({}, status=status.HTTP_400_BAD_REQUEST)
+        if id:
+            customer = Customer.objects.get(pk=id)
+        else:
+            customer = Customer()
+        serializer = CustomerSerializer(customer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 
 class CustomerAPIView(APIView):
@@ -146,11 +199,9 @@ class RequestAPIView(APIView):
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-        #try:
+        # try:
         request_.save()
-        #except:
+        # except:
         #    Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({})
