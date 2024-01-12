@@ -3,7 +3,7 @@
 {% block content %}
 	<div id="app">
 		<p class="text-center h3 mb-4"> Заказчики</p>
-		
+
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder="новый заказчик" aria-label="новый заказчик"
 			       aria-describedby="button-addon2" v-model="customer.name">
@@ -43,6 +43,8 @@
 					</div>
 				</div>
 
+
+				
 				<div class="col-2 themed-grid-col text-end" v-if="customer.id-item.id">
 					<button type="button" class="btn btn-outline-success btn-sm" v-on:click="customer=item">ред.</button>
 				</div>
