@@ -45,9 +45,11 @@ class Object(models.Model):
 class Facility(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField('Наименование',max_length=255)
+    region = models.ForeignKey(Region, null=True, blank=True,  default=None, on_delete=models.SET(None))
     address = models.TextField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    #responsible = models.ForeignKey(User, null=True, blank=True,  default=None, on_delete=models.SET(None))
+    customer_number = models.CharField('номер в системе заказчика', max_length=255, blank=True, default="")
+    responsible = models.ForeignKey(User, null=True, blank=True,  default=None, on_delete=models.SET(None))
     active = models.BooleanField('Активный', default=True)
 
     class Meta:

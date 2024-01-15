@@ -1,5 +1,7 @@
 import datetime
+import os
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db import models
@@ -13,6 +15,28 @@ from .models import Customer, Object, Request, Region, Facility
 from .serializers import CustomerSerializer, ObjectSerializer, ObjectSerializer2, RequestSerializer
 from .serializers import UserSerializer, UserListSerializer, RegionSerializer, FacilitySerializer
 
+from .business_logic import parseObjectsFromFile
+
+#  функция сохранения файла
+def save_file(file_obj, path, file_name):
+    # Create the salaryFile folder if it doesn't exist
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    base, extension = os.path.splitext(file_name)
+    print(base, " ", extension)
+    # Create the path to the uploaded file
+    file_path = os.path.join(path, file_name)
+    count = 0
+    while os.path.exists(file_path):
+        file_path = os.path.join(path, f"{base}{count}{extension}")
+        count += 1
+
+    # Save the file
+    with open(file_path, 'wb+') as destination:
+        for chunk in file_obj.chunks():
+            destination.write(chunk)
+    return file_path
 
 def get_related_models(model):
     related_fields = {}
@@ -47,12 +71,15 @@ class RegionAPIView(LoginRequiredMixin, APIView):
 
 
 class FacilityAPIView(LoginRequiredMixin, APIView):
-        @staticmethod
-        def post(request):
-            queryset = Facility.objects.all()
-            serializer_class = FacilitySerializer(queryset, many=True)
-            result = serializer_class.data
-            return Response(result)
+    @staticmethod
+    def post(request):
+        queryset = Facility.objects.all()
+        id = request.data.get('id')
+        if id is not None:
+            queryset = queryset.filter(customer__id=id)
+        serializer_class = FacilitySerializer(queryset, many=True)
+        result = serializer_class.data
+        return Response(result)
 
 
 class UserAPI(LoginRequiredMixin, APIView):
@@ -81,9 +108,11 @@ class CustomerListAPIView_____(generics.ListAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
+
 class CustomerListAPIView(LoginRequiredMixin, APIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
     @staticmethod
     def post(request):
         queryset = Customer.objects.all()
@@ -105,11 +134,6 @@ class CustomerListAPIView(LoginRequiredMixin, APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
 
 
 class CustomerAPIView(APIView):
@@ -272,3 +296,15 @@ class ObjectListAPIView(generics.ListAPIView):
 class RequestListAPIView(generics.ListAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSerializer
+
+
+class UploadFacilityFileAPIView(APIView, LoginRequiredMixin):
+    @staticmethod
+    def post(request, id):
+        path = os.path.join(settings.BASE_DIR, 'uploadDir/tmp')
+        file_obj = request.FILES.get('file', default=None)
+        fileName=save_file(file_obj, path, file_obj.name)
+        if 0 == parseObjectsFromFile(fileName, id):
+            return Response({'result': 'ok'})
+        else:
+            return Response({'result': 'error'})

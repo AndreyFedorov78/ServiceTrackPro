@@ -8,7 +8,6 @@ from . import views
 urlpatterns =[
     path('regions/', views.RegionsView.as_view(),name="regions"),
     path('customers/', views.CustomersView.as_view(), name='customers'),
-
-
+    path('customer/<int:id>', views.CustomerView.as_view(), name='customer'),
 
 ]

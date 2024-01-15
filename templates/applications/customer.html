@@ -1,0 +1,85 @@
+{% extends 'applications/common.html' %}
+
+{% block content %}
+	<div id="app">
+		<h3>
+			[[customer.name]]
+		</h3>
+
+		<textarea v-model="customer.details"></textarea><br>
+		<input v-model="customer.representative">
+		<br>
+		<br><br>
+
+
+<!--label class="form-label" for="file">Default file input example</label-->
+<input type="file" class="form-control" id="file" ref="file" v-on:change="handleFileUpload()"/>
+		<button type="button" class="btn btn-primary mb-4 mt-2"  v-on:click="sendFile()">отправить</button>
+
+		<table class="table table-bordered">
+			<tr v-for="item in facilities">
+				<td>
+					[[item.customer_number]] |
+					[[item.title]],
+					[[item.address]]
+				</td>
+			</tr>
+		</table>
+
+<!--br><br>
+
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal">
+			Launch demo modal
+		</button>
+		<br>
+
+
+	-->
+
+	</div>
+
+	<!-- Модальные окна -->
+
+	<!-- Modal -->
+	<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Загрузка объктов</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+				<div class="modal-body">
+					<div class="text-center"><a download="" href="/static/template/ks2_example.xlsx">Образаец файла для
+						загрузки</a></div>
+					<div class="container d-flex justify-content-center">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="file-drop-area">
+									<span class="choose-file-button">Выберете файл</span>
+									<span class="file-message border pt-5 pb-5 pr-2 pl-2">или перетащите его сюда</span>
+									<input class="file-input" type="file" multiple>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+					<button type="button"  onclick="ks2send()" class="btn btn-primary" data-bs-dismiss="modal">Загрузить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block js %}
+
+	<script src="/static/applications/js/customer.js"></script>
+
+	</script>
+
+{% endblock %}

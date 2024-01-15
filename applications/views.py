@@ -32,3 +32,9 @@ class CustomersView(LoginRequiredMixin, View):
     @staticmethod
     def get(request):
         return render(request, "applications/customers.html")
+
+
+class CustomerView(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request,id):
+        return render(request, "applications/customer.html", {'id':id})

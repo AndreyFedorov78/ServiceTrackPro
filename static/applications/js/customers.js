@@ -1,5 +1,24 @@
 const url="/api/customers/" // так как тут мы планируем работать с одним API то задем глобальную переменную с путем к API
 const url_facility="/api/facility/"
+
+
+
+
+Vue.component('my-template', {
+  template: `
+    <div>
+      <!-- Ваш повторяющийся HTML-код здесь -->
+      <p>{{ message }}</p>
+    </div>
+  `,
+  data() {
+    return {
+      message: 'Hello, World!'
+    };
+  }
+});
+
+
 //содзаем объект vue
 const customer_orders = new Vue({
     el: "#app", // привязываем объект к области div с id="app"

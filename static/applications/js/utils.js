@@ -96,3 +96,16 @@ function zeroPad(value, n) {
     return str;
 }
 
+
+async function FetchFile(url, data) {
+    const headers = {
+        //'Content-Type': 'multipart/form-data',
+        "X-CSRFToken": getToken(),
+    };
+    let response = await fetch(url, {
+        method: "post",
+        headers: headers,
+        body: data,
+    });
+    return response;
+}
