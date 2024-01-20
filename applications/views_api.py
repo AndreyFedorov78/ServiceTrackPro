@@ -1,6 +1,7 @@
 import datetime
 import os
 
+from django.http import FileResponse, Http404
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -11,9 +12,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Customer, Object, Request, Region, Facility
+from .models import Customer, Object, Request, Region, Facility, Files, FacilityIMG
 from .serializers import CustomerSerializer, ObjectSerializer, ObjectSerializer2, RequestSerializer
-from .serializers import UserSerializer, UserListSerializer, RegionSerializer, FacilitySerializer
+from .serializers import UserSerializer, UserListSerializer, RegionSerializer, FacilitySerializer, FacilityIMGSerializer
 
 from .business_logic import parseObjectsFromFile
 
@@ -21,7 +22,12 @@ from .business_logic import parseObjectsFromFile
 def save_file(file_obj, path, file_name):
     # Create the salaryFile folder if it doesn't exist
     if not os.path.exists(path):
-        os.makedirs(path)
+        try:
+            os.makedirs(path)
+        except FileExistsError:
+            print(f"Директория {path} уже существует.")
+        except Exception as e:
+            print(f"Произошла ошибка при создании директории: {e}")
 
     base, extension = os.path.splitext(file_name)
     print(base, " ", extension)
@@ -49,10 +55,20 @@ def get_related_models(model):
 class RegionAPIView(LoginRequiredMixin, APIView):
     @staticmethod
     def post(request):
-        region = Region.objects.all()
+        region = Region.objects.filter()
         regionSerializer = RegionSerializer(region, many=True)
         result = regionSerializer.data
         return Response(result)
+    @staticmethod
+    def get(request):
+            region = Region.objects.filter(active=True)
+            not_selected = Region(id=None, title="не выбран")
+            region = [not_selected] + list(region)
+
+            regionSerializer = RegionSerializer(region, many=True)
+            result = regionSerializer.data
+            return Response(result)
+
 
     @staticmethod
     def put(request):
@@ -80,6 +96,16 @@ class FacilityAPIView(LoginRequiredMixin, APIView):
         serializer_class = FacilitySerializer(queryset, many=True)
         result = serializer_class.data
         return Response(result)
+
+
+class FacilityEditAPIView(LoginRequiredMixin, APIView):
+    @staticmethod
+    def post(request, id):
+        queryset = Facility.objects.get(id=id)
+        serializer_class = FacilitySerializer(queryset)
+        result = serializer_class.data
+        return Response(result)
+
 
 
 class UserAPI(LoginRequiredMixin, APIView):
@@ -298,6 +324,33 @@ class RequestListAPIView(generics.ListAPIView):
     serializer_class = RequestSerializer
 
 
+class UploadFacilityIMGAPIView(APIView, LoginRequiredMixin):
+    @staticmethod
+    def get(request, id):
+        facility = Facility.objects.get(id=id)
+        imgs=FacilityIMG.objects.filter(facility=facility)
+        return Response(FacilityIMGSerializer(imgs, many=True).data)
+
+
+    @staticmethod
+    def post(request, id):
+            path = os.path.join(settings.BASE_DIR, f'uploadDir/img/{id}')
+            file_obj = request.FILES.get('file', default=None)
+            fileName=save_file(file_obj, path, file_obj.name)
+
+            file = Files()
+            file.file_name=file_obj.name
+            file.real_file_name=fileName
+            file.save()
+            img=FacilityIMG()
+            img.facility=Facility.objects.get(id=id)
+            img.file=file
+            img.save()
+
+            return Response(FacilityIMGSerializer(img).data)
+
+
+
 class UploadFacilityFileAPIView(APIView, LoginRequiredMixin):
     @staticmethod
     def post(request, id):
@@ -308,3 +361,24 @@ class UploadFacilityFileAPIView(APIView, LoginRequiredMixin):
             return Response({'result': 'ok'})
         else:
             return Response({'result': 'error'})
+
+
+class FileDownloadView(APIView):
+    def get(self, request, id):
+        file_instance = get_object_or_404(Files, id=id)
+        file_path = file_instance.real_file_name  # Assuming this is the path on your server
+
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{file_instance.file_name}"'
+        return response
+
+    def delete(self, request, id):
+        file_instance = get_object_or_404(Files, id=id)
+        file_path = file_instance.real_file_name
+
+        try:
+            os.remove(file_path)
+            file_instance.delete()  # Удаление записи из базы данных
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

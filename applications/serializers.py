@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Customer, Object,  Request, Region, Facility
+from .models import Customer, Object,  Request, Region, Facility, FacilityIMG
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -10,9 +10,16 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class FacilitySerializer(serializers.ModelSerializer):
+    customer_title = serializers.ReadOnlyField(source="customer.name")
     class Meta:
         model = Facility
         fields = "__all__"
+
+class FacilityIMGSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source="file.file_name")
+    class Meta:
+        model = FacilityIMG
+        fields = ["file","name"]
 
 
 class UserSerializer(serializers.ModelSerializer):

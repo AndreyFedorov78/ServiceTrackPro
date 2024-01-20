@@ -19,9 +19,10 @@
 		<table class="table table-bordered">
 			<tr v-for="item in facilities">
 				<td>
+					<a :href="'/facility/'+item.id">
 					[[item.customer_number]] |
 					[[item.title]],
-					[[item.address]]
+					[[item.address]]</a>
 				</td>
 			</tr>
 		</table>

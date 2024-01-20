@@ -3,6 +3,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Files(models.Model):
+    id = models.AutoField(primary_key=True)
+    file_name = models.CharField('Имя загруженного файла', max_length=255)
+    real_file_name = models.CharField('Имя файла на диске', max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name='Файл'
+        verbose_name_plural = 'Файлы'
+        ordering = ["created",]
+
+
 class Region(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField('Наименование', max_length=255)
@@ -19,9 +31,6 @@ class Region_name(models.Model):
     class Meta:
         verbose_name = 'Наименование региона'
         verbose_name_plural = 'Наименования регионов'
-
-
-
 
 
 class Customer(models.Model):
@@ -50,7 +59,10 @@ class Facility(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     customer_number = models.CharField('номер в системе заказчика', max_length=255, blank=True, default="")
     responsible = models.ForeignKey(User, null=True, blank=True,  default=None, on_delete=models.SET(None))
+    openDate = models.DateField('Дата Открытия',null=True, blank=True,  default=None)
+    lastServiceDate = models.DateField('Дата последнего обслуживания',null=True, blank=True,  default=None)
     active = models.BooleanField('Активный', default=True)
+
 
     class Meta:
         verbose_name='Объект'
@@ -60,6 +72,16 @@ class Facility(models.Model):
     def __str__(self):
         return f'{self.title} / {self.customer.name}'
 
+
+class FacilityIMG(models.Model):
+     id = models.AutoField(primary_key=True)
+     facility = models.ForeignKey(Facility, on_delete=models.CASCADE)
+     file = models.ForeignKey(Files, on_delete=models.CASCADE)
+
+     class Meta:
+         verbose_name = 'Фото объектов'
+         verbose_name_plural = 'Фото объектов'
+         ordering = ["-file__created", ]
 
 
 class Request(models.Model):
@@ -99,5 +121,7 @@ class Request(models.Model):
         '-completion_date',
         '-request_date',
     ]
+
+
 
 

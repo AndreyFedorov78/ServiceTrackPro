@@ -25,6 +25,7 @@ const customer_orders = new Vue({
     delimiters: ["[[", "]]"], // переключаем шаблон с {{}} на [[]] чтобы не путь с python
     data: {
         /* две переменные для временного хранения вводимых данных*/
+        selectedDate: null,
         edit_id:0,
         edit_title:"",
         facilities: [],

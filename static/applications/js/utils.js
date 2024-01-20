@@ -87,6 +87,13 @@ function formatDate(date) {
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+function localFormatDate(date) {
+    if (date == null) return null
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${day}/${month}/${year}`;
+}
 
 function zeroPad(value, n) {
     let str = '' + value;
@@ -107,5 +114,6 @@ async function FetchFile(url, data) {
         headers: headers,
         body: data,
     });
-    return response;
+
+    return response
 }

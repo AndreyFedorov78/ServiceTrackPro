@@ -1,0 +1,138 @@
+{% extends 'applications/common.html' %}
+
+{% block content %}
+	<div id="app">
+
+
+		<h3>
+			<input v-model="facility.title"
+			       class="text-primary border-0 border-bottom">
+		</h3>
+
+		Заказчик: "[[facility.customer_title]]"
+
+		<!-- Номер от заказчика -->
+		<div class="input-group mb-3">
+			<span class="input-group-text">Номер от заказчика:</span>
+			<input type="text" class="form-control" placeholder="номер" aria-label="номер" v-model="facility.customer_number">
+		</div>
+
+
+		<!-- Регион -->
+		<div class="input-group mb-3">
+			<span class="input-group-text">Регион:</span>
+			<select type="text" class="form-control" placeholder="Регион" aria-label="Регион" v-model="facility.region">
+				<option v-for="region in regions" :value="region.id">[[region.title]]</option>
+			</select>
+		</div>
+
+
+		<!-- Адрес -->
+		<div class="input-group mb-3">
+			<span class="input-group-text">Адрес объекта:</span>
+			<input type="text" class="form-control" placeholder="Адрес" aria-label="Адрес" v-model="facility.address">
+		</div>
+
+		<!-- Ответственный -->
+		<div class="input-group mb-3">
+			<span class="input-group-text">Ответственный:</span>
+			<select type="text" class="form-control" placeholder="Ответственный" aria-label="Ответственный"
+			        v-model="facility.responsible">
+				<option v-for="user in users" :value="user.id">[[user.name]]</option>
+			</select>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<!-- Дата открытия -->
+				<v-date-picker v-model="openDate" :update-on-input="false">
+					<template v-slot="{ inputValue, inputEvents }">
+						<div class="input-group mb-3">
+							<span class="input-group-text">Дата открытия:</span>
+							<input
+									class="form-control"
+									:value="inputValue"
+									v-on="inputEvents"
+							/>
+							<span class="input-group-text">
+								<button class="btn-close btn-outline-secondary" type="button" v-on:click="openDate=0"></button>
+							</span>
+						</div>
+					</template>
+				</v-date-picker>
+			</div>
+			<div class="col-lg-6">
+				<!-- Дата последнего обслуживания -->
+				<v-date-picker v-model="lastServiceDate" :update-on-input="false">
+					<template v-slot="{ inputValue, inputEvents }">
+						<div class="input-group mb-3">
+							<span class="input-group-text">Дата обслуживания:</span>
+							<input
+									class="form-control"
+									:value="inputValue"
+									v-on="inputEvents"
+							/>
+							<span class="input-group-text">
+								<button class="btn-close btn-outline-secondary" type="button" v-on:click="lastServiceDate=0"></button>
+							</span>
+						</div>
+					</template>
+				</v-date-picker>
+			</div>
+		</div>
+
+
+
+
+	Фото:
+	<div id="drop-area" @dragover.prevent @drop.prevent="handleDrop"
+	     class="container-fluid mt-3 pt-2 pb-2"
+	     style="background: #bbbbbb; min-height: 200px; max-height: 500px; overflow-y: auto;">
+		<div class="row">
+			<div v-for="img in imgs" class="col-md-4 mb-3">
+				<div class="card border">
+					<div class="card-header border-bottom d-flex justify-content-between">
+						<h6 class="card-title text-muted text-truncate" style="max-width: 16em;">[[ img.name ]]</h6>
+						<span v-on:click="img_del(img)" class="btn">
+					   <stp-trash class="text-danger"> </stp-trash>
+
+          </span>
+						<!--button type="button" class="btn-close" aria-label="Close" v-on:click="img_del(img)"></button-->
+					</div>
+					<img :src="'/api/get_file/' + img.file" class="card-img-top" alt="Image" data-bs-toggle="modal"
+					     :data-bs-target="'#imageModal' + img.file">
+				</div>
+
+				<!-- Модальное окно для каждой картинки -->
+				<div :id="'imageModal' + img.file" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel"
+				     aria-hidden="true">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">[[ img.name ]]</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<img :src="'/api/get_file/' + img.file" class="img-fluid" alt="Image">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+
+
+{% endblock %}
+
+
+{% block js %}
+	<script src='https://unpkg.com/v-calendar'></script>
+	<script src="/static/applications/js/facility.js"></script>
+
+	</script>
+
+{% endblock %}
