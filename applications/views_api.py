@@ -98,6 +98,7 @@ class FacilityAPIView(LoginRequiredMixin, APIView):
         return Response(result)
 
 
+
 class FacilityEditAPIView(LoginRequiredMixin, APIView):
     @staticmethod
     def post(request, id):
@@ -106,6 +107,22 @@ class FacilityEditAPIView(LoginRequiredMixin, APIView):
         result = serializer_class.data
         return Response(result)
 
+
+    @staticmethod
+    def put(request, id):
+        id = request.data.get('id')
+        if id is None:
+            Response({}, status=status.HTTP_400_BAD_REQUEST)
+        if id:
+            facility = Facility.objects.get(pk=id)
+        else:
+            facility = Facility()
+
+        serializer = FacilitySerializer(facility, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserAPI(LoginRequiredMixin, APIView):

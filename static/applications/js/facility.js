@@ -52,8 +52,14 @@ new Vue({
                 }
             }
             this.uploadFiles()
-        }
-        ,
+        },
+        async save(){
+            this.facility.openDate = formatDate(this.openDate)
+            this.facility.lastServiceDate = formatDate(this.lastServiceDate)
+
+            this.facility = await FetchJsonPUT(url_facility+this.id , this.facility);
+            console.log('data saved');
+        },
         uploadFiles() {
             let files = this.uploadedFiles;
 
